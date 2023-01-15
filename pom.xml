@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--Org parent can be added. Not using an org parent for this project
+  <parent>
+    <groupId>org.cotalent.poms</groupId>
+    <artifactId>cotalent-parent</artifactId>
+    <version>x.y.z</version>
+    <relativePath />
+  </parent>-->
+
+
+  <groupId>com.cotalent.reports</groupId>
+  <artifactId>systemA-reporting</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>SystemA Reporting</name>
+  <description>Reporting Module for ABN AMRO future transactions (SystemA)</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>model-systemA</module>
+    <module>app</module>
+  </modules>
+
+  <properties>
+    <failOnWarning>true</failOnWarning>
+    <showWarnings>${failOnWarning}</showWarnings>
+    <checkstyle.console>true</checkstyle.console>
+
+    <skipIT>true</skipIT>
+    <skipUT>false</skipUT>
+
+    <!-- Spring Boot & Cloud -->
+    <spring-boot.version>3.0.1</spring-boot.version>
+    <spring-cloud.version>2022.0.0</spring-cloud.version>
+
+    <!-- maven plugins -->
+    <plugins.surefire.version>3.0.0-M8</plugins.surefire.version>
+    <plugins.failesafe.version>3.0.0-M8</plugins.failesafe.version>
+    <plugins.surefire-report.version>3.0.0-M8</plugins.surefire-report.version>
+    <plugins.project-info-reports.version>3.1.1</plugins.project-info-reports.version>
+    <plugins.source.version>3.2.1</plugins.source.version>
+    <plugins.jacoco.version>0.8.6</plugins.jacoco.version>
+    <plugins.checkstyle.version>3.1.1</plugins.checkstyle.version>
+
+    <!-- Test configuration -->
+    <test.bdd>**/CucumberTest.class</test.bdd>
+    <test.Exclude>${test.bdd}</test.Exclude>
+    <test.Include>**/*Test.class</test.Include>
+
+    <!-- compiler java versions -->
+    <java.version>11</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+
+    <!-- Test Coverage Thresholds -->
+    <jacoco.excludes></jacoco.excludes>
+    <jacoco.branch-covered>100%</jacoco.branch-covered>
+    <jacoco.instruction-covered>100%</jacoco.instruction-covered>
+    <jacoco.line-missed>0</jacoco.line-missed>
+    <jacoco.method-missed>0</jacoco.method-missed>
+    <jacoco.class-missed>0</jacoco.class-missed>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+          <configuration>
+            <jvmArguments>-Dspring.config.additional-location=optional:file:${user.home}/.spring/${env}.yml,optional:file:${user.home}/.spring/${env}.properties</jvmArguments>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <version>${plugins.failesafe.version}</version>
+          <executions>
+            <execution>
+              <id>default-cli</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <skip>${skipIT}</skip>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${plugins.surefire.version}</version>
+          <configuration>
+            <argLine>${argLine}</argLine>
+            <skip>${skipUT}</skip>
+            <includes>
+              <include>${test.Include}</include>
+            </includes>
+            <excludes>
+              <exclude>${test.Exclude}</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <failOnWarning>${failOnWarning}</failOnWarning>
+            <showWarnings>${showWarnings}</showWarnings>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${plugins.source.version}</version>
+        <executions>
+          <execution>
+            <id>attach-source</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${plugins.project-info-reports.version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>summary</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${plugins.surefire-report.version}</version>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>report-only</goal>
+            </goals>
+            <configuration>
+              <linkXRef>false</linkXRef>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${plugins.checkstyle.version}</version>
+        <configuration>
+          <logViolationsToConsole>${checkstyle.console}</logViolationsToConsole>
+          <includeTestResources>true</includeTestResources>
+          <logViolationsToConsole>false</logViolationsToConsole>
+          <encoding>UTF-8</encoding>
+          <linkXRef>false</linkXRef>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-cli</id>
+            <goals>
+              <goal>checkstyle</goal>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${plugins.jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>jacoco-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <limits>
+                    <limit>
+                      <counter>INSTRUCTION</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>${jacoco.instruction-covered}</minimum>
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>${jacoco.branch-covered}</minimum>
+                    </limit>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>MISSEDCOUNT</value>
+                      <maximum>${jacoco.line-missed}</maximum>
+                    </limit>
+                    <limit>
+                      <counter>METHOD</counter>
+                      <value>MISSEDCOUNT</value>
+                      <maximum>${jacoco.method-missed}</maximum>
+                    </limit>
+                    <limit>
+                      <counter>CLASS</counter>
+                      <value>MISSEDCOUNT</value>
+                      <maximum>${jacoco.class-missed}</maximum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>${jacoco.excludes}</excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <!-- Import dependency management from Spring Boot -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <properties>
+        <environment>dev</environment>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>debug</id>
+      <activation>
+        <property>
+          <name>debug</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <jvmArguments>
+                -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+              </jvmArguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
