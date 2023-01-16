@@ -1,4 +1,4 @@
-package org.cotalent.reports.app;
+package org.cotalent.reports.app.dto;
 
 import java.time.LocalDate;
 
@@ -6,10 +6,17 @@ import org.cotalent.reports.model.Fields;
 import org.cotalent.reports.model.SystemAField;
 import org.cotalent.reports.model.SystemARecord;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Trade {
+  private static final char SEPERATOR = '_';
 
   @SystemARecord
   private Client client;
@@ -28,6 +35,9 @@ public class Trade {
   }
 
   @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class Client {
     @SystemAField(field = Fields.CLIENT_TYPE)
     private String clientType;
@@ -40,9 +50,17 @@ public class Trade {
 
     @SystemAField(field = Fields.SUBACCOUNT_NUMBER)
     private Number subAccountNumber;
+
+    @Override
+    public String toString() {
+      return clientType + SEPERATOR + clientNumber + SEPERATOR + accountNumber + SEPERATOR + subAccountNumber;
+    }
   }
 
   @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class Product {
     @SystemAField(field = Fields.EXCHANGE_CODE)
     private String exchangeCode;
@@ -55,5 +73,10 @@ public class Trade {
 
     @SystemAField(field = Fields.EXPIRATION_DATE)
     private LocalDate expirationDate;
+
+    @Override
+    public String toString() {
+      return exchangeCode + SEPERATOR + productGroupCode + SEPERATOR + symbol + SEPERATOR + expirationDate;
+    }
   }
 }

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: SystemA-Report
+  cloud:
+    config:
+      label: main
+      import-check:
+        enabled: false
+springdoc:
+  writer-with-default-pretty-printer: true
+  default-support-form-data: true
+reports:
+  base-folder:
+    input: input
+    output: output

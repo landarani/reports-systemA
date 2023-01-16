@@ -38,6 +38,7 @@
 
 
     <!-- Spring Boot & Cloud -->
+    <env>local</env>
     <spring-boot.version>3.0.1</spring-boot.version>
     <spring-cloud.version>2022.0.0</spring-cloud.version>
 

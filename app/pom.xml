@@ -17,6 +17,13 @@
 
   <properties>
     <springdoc-openapi.version>1.6.12</springdoc-openapi.version>
+    <!-- Test Coverage Thresholds -->
+    <jacoco.excludes>**/dto/*.class</jacoco.excludes>
+    <jacoco.branch-covered>33%</jacoco.branch-covered>
+    <jacoco.instruction-covered>66%</jacoco.instruction-covered>
+    <jacoco.line-missed>22</jacoco.line-missed>
+    <jacoco.method-missed>11</jacoco.method-missed>
+    <jacoco.class-missed>4</jacoco.class-missed>
   </properties>
 
   <build>
@@ -103,10 +110,6 @@
     </dependency>
 
     <!-- Utils -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

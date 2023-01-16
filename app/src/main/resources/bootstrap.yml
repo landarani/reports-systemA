@@ -1,0 +1,6 @@
+spring:
+  jackson:
+    date-format: yyyyMMdd
+springdoc:
+  show-actuator: true
+#  use-management-port: true
