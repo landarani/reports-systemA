@@ -12,7 +12,7 @@
   </parent>-->
 
 
-  <groupId>com.cotalent.reports</groupId>
+  <groupId>org.cotalent.reports</groupId>
   <artifactId>systemA-reporting</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>SystemA Reporting</name>
@@ -25,12 +25,17 @@
   </modules>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     <failOnWarning>true</failOnWarning>
     <showWarnings>${failOnWarning}</showWarnings>
     <checkstyle.console>true</checkstyle.console>
 
     <skipIT>true</skipIT>
     <skipUT>false</skipUT>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
 
     <!-- Spring Boot & Cloud -->
     <spring-boot.version>3.0.1</spring-boot.version>
@@ -42,7 +47,7 @@
     <plugins.surefire-report.version>3.0.0-M8</plugins.surefire-report.version>
     <plugins.project-info-reports.version>3.1.1</plugins.project-info-reports.version>
     <plugins.source.version>3.2.1</plugins.source.version>
-    <plugins.jacoco.version>0.8.6</plugins.jacoco.version>
+    <plugins.jacoco.version>0.8.8</plugins.jacoco.version>
     <plugins.checkstyle.version>3.1.1</plugins.checkstyle.version>
 
     <!-- Test configuration -->
@@ -51,7 +56,7 @@
     <test.Include>**/*Test.class</test.Include>
 
     <!-- compiler java versions -->
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -176,7 +181,6 @@
         <configuration>
           <logViolationsToConsole>${checkstyle.console}</logViolationsToConsole>
           <includeTestResources>true</includeTestResources>
-          <logViolationsToConsole>false</logViolationsToConsole>
           <encoding>UTF-8</encoding>
           <linkXRef>false</linkXRef>
         </configuration>

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.cotalent.reports</groupId>
+    <groupId>org.cotalent.reports</groupId>
     <artifactId>systemA-reporting</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
@@ -60,6 +60,11 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>model-systemA</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <!-- Spring boot dependencies -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
