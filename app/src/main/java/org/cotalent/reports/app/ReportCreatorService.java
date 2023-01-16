@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -49,17 +50,38 @@ public class ReportCreatorService {
     if (!input.exists() && input.isFile()) {
       log.warn("[{}] is not a directory or doesn't exist.", inputFolder);
     }
-    Arrays.stream(input.listFiles(File::isDirectory)).map(this::isAcceptableFolder).filter(Objects::nonNull)
+    File[] subfolders = input.listFiles(File::isDirectory);
+    if (subfolders.length == 0) {
+      log.warn("There is no input to process. Checking in some seconds...");
+      return;
+    }
+    Arrays.stream(subfolders)
+        .map(this::isAcceptableFolder)
+        .filter(Objects::nonNull)
         .forEach(this::process);
   }
 
   public void process(LocalDate date) {
+    log.debug("Processing the input file for the date [{}]", date);
+    File outputFolderDate;
+    try {
+      outputFolderDate = new File(outputFolder, date.format(folderFormat));
+      if (!outputFolderDate.exists()) {
+        log.info("Creating the output folder for the date [{}]", date);
+        if (!outputFolderDate.mkdir()) {
+          throw new IOException(outputFolderDate.getPath() + " doesn't exist and cannot be created.");
+        }
+      }
+    } catch (Exception x) {
+      log.error("Unable to create output folder for the date [{}]", date, x);
+      return;
+    }
+
     try (
         FileReader fileReader = new FileReader(
             inputFolder + File.separator + date.format(folderFormat) + File.separator + INPUT_FILE_NAME);
         BufferedReader reader = new BufferedReader(fileReader);
-        PrintWriter csvWriter = new PrintWriter(new FileWriter(
-            outputFolder + File.separator + date.format(folderFormat) + File.separator + OUTPUT_FILE_NAME))) {
+        PrintWriter csvWriter = new PrintWriter(new FileWriter(new File(outputFolderDate, OUTPUT_FILE_NAME), false))) {
       mapper.read(Trade.class, reader).subscribe(tradeConsumer);
       csvWriter.println(CSV_HEADER);
       tradeConsumer.report().map(TradeAggregate::toCsvLine).subscribe(csvWriter::println);
@@ -79,7 +101,7 @@ public class ReportCreatorService {
         return date;
       }
     } catch (Exception x) {
-      log.debug("rejecting [{}/{}]", file.getPath() + file.getName());
+      log.debug("rejecting non standard folder [{}]", file.getPath());
     }
     return null;
   }

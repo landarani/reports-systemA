@@ -2,6 +2,7 @@ package org.cotalent.reports.app;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.emptyArray;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,9 +29,11 @@ public class ReportCreatoreServiceTest {
   @Rule
   public TemporaryFolder input = new TemporaryFolder();
   private String tmpFolderName;
+  private String emptyFolderName;
 
   @Before
   public void createTmpFolders() throws Exception {
+    emptyFolderName = input.newFolder("empty").getPath();
     File dateFolder = input.newFolder("20220116");
     tmpFolderName = dateFolder.getParent();
     File target = new File(dateFolder + File.separator + "Input.txt");
@@ -49,6 +52,16 @@ public class ReportCreatoreServiceTest {
   }
 
   @Test
+  public void shouldDoNothingforEmptyInput() throws Exception {
+    updateSutField("inputFolder", emptyFolderName);
+    updateSutField("outputFolder", emptyFolderName);
+    sut.scan();
+
+    File[] createdFiles = new File(emptyFolderName).listFiles();
+    assertThat(createdFiles, emptyArray());
+  }
+
+  @Test
   public void shouldReadInput() throws Exception {
     updateSutField("inputFolder", tmpFolderName);
     updateSutField("outputFolder", tmpFolderName);
@@ -62,7 +75,7 @@ public class ReportCreatoreServiceTest {
     String actualFileContent = Files.readString(
         Paths.get(tmpFolderName + File.separator + "20220116" + File.separator + "Output.csv"),
         Charset.defaultCharset());
-    log.info("Actual File Content: \n[{}]", actualFileContent);
+    log.info("Actual output Content: \n[{}]", actualFileContent);
     assertThat(actualFileContent, is(expectedFileContent));
   }
 
