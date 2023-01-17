@@ -33,10 +33,10 @@ public class ReportCreatorService {
   private static final String CSV_HEADER = "Client_Information,Product_Information,Total_Transaction_Amount";
 
   @Value("${reports.base-folder.output}")
-  private String outputFolder;
+  private String outputBaseFolder;
 
   @Value("${reports.base-folder.input}")
-  private String inputFolder;
+  private String inputBaseFolder;
 
   private final DateTimeFormatter folderFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
   private final SystemAMapper mapper = new SystemAMapper();
@@ -45,10 +45,10 @@ public class ReportCreatorService {
 
   @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
   public void scan() {
-    File input = new File(inputFolder);
-    log.debug("Scanning: [{}] and checking output from [{}]", inputFolder, outputFolder);
+    File input = new File(inputBaseFolder);
+    log.debug("Scanning: [{}] and checking output from [{}]", inputBaseFolder, outputBaseFolder);
     if (!input.exists() && input.isFile()) {
-      log.warn("[{}] is not a directory or doesn't exist.", inputFolder);
+      log.warn("[{}] is not a directory or doesn't exist.", inputBaseFolder);
     }
     File[] subfolders = input.listFiles(File::isDirectory);
     if (subfolders.length == 0) {
@@ -65,7 +65,7 @@ public class ReportCreatorService {
     log.debug("Processing the input file for the date [{}]", date);
     File outputFolderDate;
     try {
-      outputFolderDate = new File(outputFolder, date.format(folderFormat));
+      outputFolderDate = new File(outputBaseFolder, date.format(folderFormat));
       if (!outputFolderDate.exists()) {
         log.info("Creating the output folder for the date [{}]", date);
         if (!outputFolderDate.mkdir()) {
@@ -79,7 +79,7 @@ public class ReportCreatorService {
 
     try (
         FileReader fileReader = new FileReader(
-            inputFolder + File.separator + date.format(folderFormat) + File.separator + INPUT_FILE_NAME);
+            inputBaseFolder + File.separator + date.format(folderFormat) + File.separator + INPUT_FILE_NAME);
         BufferedReader reader = new BufferedReader(fileReader);
         PrintWriter csvWriter = new PrintWriter(new FileWriter(new File(outputFolderDate, OUTPUT_FILE_NAME), false))) {
       mapper.read(Trade.class, reader).subscribe(tradeConsumer);
@@ -96,7 +96,7 @@ public class ReportCreatorService {
     try {
       LocalDate date = LocalDate.from(folderFormat.parse(file.getName()));
       File input = new File(file, INPUT_FILE_NAME);
-      File output = new File(outputFolder + File.separator + file.getName() + File.separator + OUTPUT_FILE_NAME);
+      File output = new File(outputBaseFolder + File.separator + file.getName() + File.separator + OUTPUT_FILE_NAME);
       if (input.exists() && input.isFile() && !(output.exists() && output.isFile())) {
         return date;
       }

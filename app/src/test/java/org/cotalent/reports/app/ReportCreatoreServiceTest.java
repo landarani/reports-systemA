@@ -53,8 +53,8 @@ public class ReportCreatoreServiceTest {
 
   @Test
   public void shouldDoNothingforEmptyInput() throws Exception {
-    updateSutField("inputFolder", emptyFolderName);
-    updateSutField("outputFolder", emptyFolderName);
+    updateSutField("inputBaseFolder", emptyFolderName);
+    updateSutField("outputBaseFolder", emptyFolderName);
     sut.scan();
 
     File[] createdFiles = new File(emptyFolderName).listFiles();
@@ -63,8 +63,8 @@ public class ReportCreatoreServiceTest {
 
   @Test
   public void shouldReadInput() throws Exception {
-    updateSutField("inputFolder", tmpFolderName);
-    updateSutField("outputFolder", tmpFolderName);
+    updateSutField("inputBaseFolder", tmpFolderName);
+    updateSutField("outputBaseFolder", tmpFolderName);
     sut.scan();
     String expectedFileContent = "Client_Information,Product_Information,Total_Transaction_Amount\n" +
         "CL_4321_3_1,CME_FU_N1_2010-09-10,-79\n" +
