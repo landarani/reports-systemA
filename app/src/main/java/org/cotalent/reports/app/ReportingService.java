@@ -16,14 +16,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ReportService {
+public class ReportingService {
   private static final String REPORT_FILE_NAME = "Output.csv";
 
   private final DateTimeFormatter folderFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
 
   private final File reportBaseFile;
 
-  public ReportService(@Value("${reports.base-folder.output}") String reportBaseFolder) {
+  public ReportingService(@Value("${reports.base-folder.output}") String reportBaseFolder) {
     this.reportBaseFile = new File(reportBaseFolder);
   }
 

@@ -28,7 +28,7 @@ public class ReportServiceTest {
   private static final String REPORT_CONTENT_LINE_1 = "Client_Information,Product_Information,Total_Transaction_Amount";
   private static final String REPORT_CONTENT_LINE_2 = "CL_4321_3_1,CME_FU_N1_2010-09-10,-79";
 
-  private ReportService sut;
+  private ReportingService sut;
 
   @Rule
   public TemporaryFolder input = new TemporaryFolder();
@@ -36,7 +36,7 @@ public class ReportServiceTest {
   @Before
   public void init() throws Exception {
     File reportFolder = input.newFolder("20220116");
-    sut = new ReportService(reportFolder.getParent());
+    sut = new ReportingService(reportFolder.getParent());
     File report = new File(reportFolder + File.separator + "Output.csv");
     try (PrintWriter out = new PrintWriter(new FileWriter(report))) {
       out.println(REPORT_CONTENT_LINE_1);

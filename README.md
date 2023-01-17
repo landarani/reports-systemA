@@ -5,22 +5,36 @@ The application scans the files in the provided input folder and generates trade
 
 # Execution
 ## dev
+starting the server spring
 ```
-#starting the server spring
 mvn spring-boot:run -f app/pom.xml
 
-# packaging
-# set a version to an arbitrary number. Usually your build script does that
+```
 
+### packaging
+set a version to an arbitrary number. Usually your build script does that
+```
 mvn -B versions:set -DnewVersion=20230118
 mvn -B package
+```
+
+### Building Docker Image
+The version which is set in packaging should be speciified as ARTIFACT_VERSION
+```
+docker build -t cotalent/reporting --build-arg ARTIFACT_VERSION=1.0.0-SNAPSHOT -f docker/Dockerfile .
+docker compose -p reporting -f docker/docker-compose.yaml up
 ```
 
 ## prod
 ```
 java -jar app/target/systemA-reporting-app-<version>.jar
 ```
-
+# Usage
+Rest EP Examples:
+```
+http://localhost:8080/reports/2023-01-18
+http://localhost:8080/reports/2023-01-18/csv
+```
 # Configuration
 ```
 reports.base-folder.input=<input base folder>

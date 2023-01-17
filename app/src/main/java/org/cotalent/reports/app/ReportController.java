@@ -27,7 +27,7 @@ public class ReportController {
 
   private final DateTimeFormatter folderNameDate = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-  private final ReportService reportService;
+  private final ReportingService service;
 
   @GetMapping(path = { "", "/" })
   @ApiResponse(description = "Returns <noOfDays> days of the reports on and before the latest day of available report.")
@@ -48,7 +48,7 @@ public class ReportController {
   public Mono<Resource> downloadCsv(@PathVariable LocalDate date, ServerHttpResponse response) throws Exception {
     response.getHeaders().add("content-disposition",
         "attachment; filename=Output." + date.format(folderNameDate) + ".csv");
-    return reportService.downloadCsv(date);
+    return service.downloadCsv(date);
   }
 
   @GetMapping(path = "/{date}", headers = "Accept=text/csv", produces = "text/csv")

@@ -51,7 +51,7 @@ public class ReportCreatorService {
       log.warn("[{}] is not a directory or doesn't exist.", inputBaseFolder);
     }
     File[] subfolders = input.listFiles(File::isDirectory);
-    if (subfolders.length == 0) {
+    if (subfolders == null || subfolders.length == 0) {
       log.warn("There is no input to process. Checking in some seconds...");
       return;
     }

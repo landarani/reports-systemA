@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  reporting:
+    image: cotalent/reporting
+    container_name: reporting
+    hostname: reporting
+    volumes:
+      - ${HOME-}/input:/var/systemA-reporting/input
+      - ${HOME-}/output:/var/systemA-reporting/output:rw
+      - ${HOME-}/logs:/var/log/reporting/:rw
+    ports:
+      - 8080:8080

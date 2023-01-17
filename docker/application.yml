@@ -1,0 +1,8 @@
+logging:
+  level:
+    root: INFO
+  file: /var/log/reporting/reporting-app.log
+reports:
+  base-folder:
+    input: /var/systemA-reporting/input
+    output: /var/systemA-reporting/output

@@ -4,3 +4,4 @@
 **/.project
 **/target/
 app/output/
+**/reporting*.log
