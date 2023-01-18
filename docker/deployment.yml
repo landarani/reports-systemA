@@ -2,7 +2,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: systemAInput.pv
+  name: reporting.input.pv
   labels:
     type: local
 spec:
@@ -15,7 +15,7 @@ spec:
     - ReadWriteMany
   claimRef:
     kind: PersistentVolumeClaim
-    name: systemAInput.pvc
+    name: reporting.input.pvc
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   volumeMode: Filesystem
@@ -24,7 +24,7 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: reportOutput.pv
+  name: reporting.output.pv
   labels:
     type: local
 spec:
@@ -37,7 +37,7 @@ spec:
     - ReadWriteMany
   claimRef:
     kind: PersistentVolumeClaim
-    name: reportOutput.pvc
+    name: reporting.output.pvc
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   volumeMode: Filesystem
@@ -46,7 +46,7 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: reportingLog.pv
+  name: reporting.log.pv
   labels:
     type: local
 spec:
@@ -59,7 +59,7 @@ spec:
     - ReadWriteMany
   claimRef:
     kind: PersistentVolumeClaim
-    name: reportingLog.pvc
+    name: reporting.log.pvc
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   volumeMode: Filesystem
@@ -68,9 +68,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: systemAInput.pvc
+  name: reporting.input.pvc
 spec:
-  volumeName: systemAInput.pv
+  volumeName: reporting.input.pv
   storageClassName: ""
   volumeMode: Filesystem
   accessModes:
@@ -83,9 +83,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: reportOutput.pvc
+  name: reporting.output.pvc
 spec:
-  volumeName: reportOutput.pv
+  volumeName: reporting.output.pv
   storageClassName: ""
   volumeMode: Filesystem
   accessModes:
@@ -98,9 +98,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: reportingLog.pvc
+  name: reporting.log.pvc
 spec:
-  volumeName: reportingLog.pvc
+  volumeName: reporting.log.pvc
   storageClassName: ""
   volumeMode: Filesystem
   accessModes:
@@ -128,7 +128,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: reporting
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           image: cotalent/reporting:latest
           resources:
             limits:
@@ -136,24 +136,30 @@ spec:
               cpu: "10m"
           volumeMounts:
             - mountPath: "/var/systemA-reporting/input"
-              name: systemAInput
+              name: reporting-input-local
             - mountPath: "/var/systemA-reporting/output"
-              name: reportOutput
+              name: reporting-output-local
             - mountPath: "/var/log/reporting/"
-              name: reportingLog
+              name: reporting-log-local
           ports:
             - name: http-port
               containerPort: 8080
       volumes:
-        - name: systemAInput
+        - name: reporting-input
           persistentVolumeClaim:
-            claimName: systemAInput.pvc
-        - name: reportOutput
+            claimName: reporting.input.pvc
+        - name: reporting-output
           persistentVolumeClaim:
-            claimName: reportOutput.pvc
-        - name: reportingLog
+            claimName: reporting.output.pvc
+        - name: reporting-log
           persistentVolumeClaim:
-            claimName: reportingLog.pvc
+            claimName: reporting.log.pvc
+        - name: reporting-input-local
+          emptyDir: {}
+        - name: reporting-output-local
+          emptyDir: {}
+        - name: reporting-log-local
+          emptyDir: {}
 
 ---
 apiVersion: v1

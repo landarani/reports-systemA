@@ -28,6 +28,7 @@ docker compose -p reporting -f docker/docker-compose.yaml up
 Note: this is tested with minikube only and uses local file system
 Should change to a NFS in production
 ```
+k apply -f deployment.yml
 ```
 
 ## prod
