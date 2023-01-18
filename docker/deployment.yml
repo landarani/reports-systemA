@@ -145,15 +145,6 @@ spec:
             - name: http-port
               containerPort: 8080
       volumes:
-        - name: reporting-input
-          persistentVolumeClaim:
-            claimName: reporting.input.pvc
-        - name: reporting-output
-          persistentVolumeClaim:
-            claimName: reporting.output.pvc
-        - name: reporting-log
-          persistentVolumeClaim:
-            claimName: reporting.log.pvc
         - name: reporting-input-local
           emptyDir: {}
         - name: reporting-output-local
