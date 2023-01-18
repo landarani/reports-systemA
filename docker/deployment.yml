@@ -1,0 +1,170 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: systemAInput.pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /input
+    type: ""
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: systemAInput.pvc
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: reportOutput.pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /output
+    type: ""
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: reportOutput.pvc
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: reportingLog.pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /log
+    type: ""
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: reportingLog.pvc
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: systemAInput.pvc
+spec:
+  volumeName: systemAInput.pv
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: reportOutput.pvc
+spec:
+  volumeName: reportOutput.pv
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: reportingLog.pvc
+spec:
+  volumeName: reportingLog.pvc
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: reporting
+          imagePullPolicy: Always
+          image: cotalent/reporting:latest
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "10m"
+          volumeMounts:
+            - mountPath: "/var/systemA-reporting/input"
+              name: systemAInput
+            - mountPath: "/var/systemA-reporting/output"
+              name: reportOutput
+            - mountPath: "/var/log/reporting/"
+              name: reportingLog
+          ports:
+            - name: http-port
+              containerPort: 8080
+      volumes:
+        - name: systemAInput
+          persistentVolumeClaim:
+            claimName: systemAInput.pvc
+        - name: reportOutput
+          persistentVolumeClaim:
+            claimName: reportOutput.pvc
+        - name: reportingLog
+          persistentVolumeClaim:
+            claimName: reportingLog.pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 31080
+  selector:
+    app: jenkins

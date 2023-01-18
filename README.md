@@ -24,15 +24,23 @@ The version which is set in packaging should be speciified as ARTIFACT_VERSION
 docker build -t cotalent/reporting --build-arg ARTIFACT_VERSION=1.0.0-SNAPSHOT -f docker/Dockerfile .
 docker compose -p reporting -f docker/docker-compose.yaml up
 ```
+### Deploying to K8S
+Note: this is tested with minikube only and uses local file system
+Should change to a NFS in production
+```
+```
 
 ## prod
 ```
 java -jar app/target/systemA-reporting-app-<version>.jar
 ```
 # Usage
-Rest EP Examples:
+Rest API Examples:
 ```
-http://localhost:8080/reports/2023-01-18
+http://localhost:8080/reports
+http://localhost:8080/reports/
+http://localhost:8080/reports/2023-01-18?noOfDays=2
+http://localhost:8080/reports/2023-01-18 (Accept:text/csv)
 http://localhost:8080/reports/2023-01-18/csv
 ```
 # Configuration
