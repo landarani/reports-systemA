@@ -2,6 +2,7 @@ package org.cotalent.reports.app;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.cotalent.reports.app.dto.TradeAggregate;
@@ -31,16 +32,16 @@ public class ReportController {
 
   @GetMapping(path = { "", "/" })
   @ApiResponse(description = "Returns <noOfDays> days of the reports on and before the latest day of available report.")
-  public Flux<Map<LocalDate, TradeAggregate>> getLatestReports(
-      @RequestParam(name = "noOfDays", required = false, defaultValue = "1") int noOfDays) {
-    return null;
+  public Flux<Map<LocalDate, List<TradeAggregate>>> getLatestReports(
+      @RequestParam(name = "noOfDays", required = false, defaultValue = "1") byte noOfDays) {
+    return service.getTradeAggregates(noOfDays);
   }
 
-  @GetMapping(path = "/{date}", headers = "Accept=application/json")
+  @GetMapping(path = "/{date}")
   @ApiResponse(description = "Returns <noOfDays> days of the reports on and before the given date.")
-  public Flux<Map<LocalDate, TradeAggregate>> getReport(@PathVariable LocalDate date,
-      @RequestParam(name = "noOfDays", required = false, defaultValue = "1") int noOfDays) {
-    return null;
+  public Flux<Map<LocalDate, List<TradeAggregate>>> getReport(@PathVariable LocalDate date,
+      @RequestParam(name = "noOfDays", required = false, defaultValue = "1") byte noOfDays) {
+    return service.getTradeAggregates(date, noOfDays);
   }
 
   @GetMapping(path = "/{date}/csv", produces = "text/csv")

@@ -77,6 +77,7 @@ public class ReportCreatorService {
       return;
     }
 
+    log.info("Creating the report for the date [{}]", date);
     try (
         FileReader fileReader = new FileReader(
             inputBaseFolder + File.separator + date.format(folderFormat) + File.separator + INPUT_FILE_NAME);

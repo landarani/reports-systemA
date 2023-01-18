@@ -16,7 +16,9 @@
   <description>Spring Boot application that starts the rest API and provides the report to the analysts via REST API</description>
 
   <properties>
+    <skipIT>false</skipIT>
     <springdoc-openapi.version>1.6.12</springdoc-openapi.version>
+    <opencsv.version>5.7.1</opencsv.version>
     <!-- Test Coverage Thresholds -->
     <jacoco.excludes>**/dto/*.class,**/*Application.class,**/*Controller.class</jacoco.excludes>
     <jacoco.branch-covered>33%</jacoco.branch-covered>
@@ -28,6 +30,9 @@
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
 
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -114,6 +119,11 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
+    <!-- <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>${opencsv.version}</version>
+    </dependency> -->
 
 
     <!-- test and dev dependencies -->

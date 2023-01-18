@@ -1,11 +1,12 @@
 package org.cotalent.reports.app;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.emptyArray;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -27,22 +28,20 @@ public class ReportCreatoreServiceTest {
   private ReportCreatorService sut = new ReportCreatorService(new TradeConsumer());
 
   @Rule
-  public TemporaryFolder input = new TemporaryFolder();
-  private String tmpFolderName;
+  public TemporaryFolder baseFolder = new TemporaryFolder();
   private String emptyFolderName;
 
   @Before
   public void createTmpFolders() throws Exception {
-    emptyFolderName = input.newFolder("empty").getPath();
-    File dateFolder = input.newFolder("20220116");
-    tmpFolderName = dateFolder.getParent();
-    File target = new File(dateFolder + File.separator + "Input.txt");
-    FileCopyUtils.copy(getClass().getResourceAsStream("/Input.txt"), new FileOutputStream(target));
+    emptyFolderName = baseFolder.newFolder("empty").getPath();
+    try (OutputStream target = new FileOutputStream(new File(baseFolder.newFolder("20220116"), "Input.txt"))) {
+      FileCopyUtils.copy(getClass().getResourceAsStream("/Input.txt"), target);
+    }
   }
 
   @After
   public void clean() throws Exception {
-    input.delete();
+    baseFolder.delete();
   }
 
   private void updateSutField(String fieldName, Object value) throws Exception {
@@ -63,8 +62,9 @@ public class ReportCreatoreServiceTest {
 
   @Test
   public void shouldReadInput() throws Exception {
-    updateSutField("inputBaseFolder", tmpFolderName);
-    updateSutField("outputBaseFolder", tmpFolderName);
+    String baseFolderName = baseFolder.getRoot().getPath();
+    updateSutField("inputBaseFolder", baseFolderName);
+    updateSutField("outputBaseFolder", baseFolderName);
     sut.scan();
     String expectedFileContent = "Client_Information,Product_Information,Total_Transaction_Amount\n" +
         "CL_4321_3_1,CME_FU_N1_2010-09-10,-79\n" +
@@ -73,7 +73,7 @@ public class ReportCreatoreServiceTest {
         "CL_1234_2_1,SGX_FU_NK_2010-09-10,-52\n" +
         "CL_1234_3_1,CME_FU_NK._2010-09-10,-215\n";
     String actualFileContent = Files.readString(
-        Paths.get(tmpFolderName + File.separator + "20220116" + File.separator + "Output.csv"),
+        Paths.get(baseFolderName + File.separator + "20220116" + File.separator + "Output.csv"),
         Charset.defaultCharset());
     log.info("Actual output Content: \n[{}]", actualFileContent);
     assertThat(actualFileContent, is(expectedFileContent));

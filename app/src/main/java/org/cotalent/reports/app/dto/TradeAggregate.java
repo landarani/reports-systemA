@@ -4,14 +4,31 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
-@RequiredArgsConstructor
 @ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
+@Slf4j
 public class TradeAggregate {
+
+  public static TradeAggregate of(String record) {
+    log.debug("Unmarshaling [{}] into TradeAggregate object", record);
+    String[] values = record.split(",");
+    return builder()
+        .client(Trade.Client.of(values[0]))
+        .product(Trade.Product.of(values[1]))
+        .totalTransactionAmount(Long.parseLong(values[2]))
+        .build();
+  };
+
   private final Trade.Client client;
   private final Trade.Product product;
 
